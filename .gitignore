@@ -1,0 +1,16 @@
+*.pyc
+/uplay/settings*.py
+/uplay/wsgi*.py
+/carga
+/media
+/static
+backup-file.sql
+db.sqlite3
+users
+/tools/db.sqlite3
+/tools/my-version.sql
+/tools/sql.mysql
+/tools/xyz.sql
+/tools/sql.sqlite3
+*~
+.idea/*

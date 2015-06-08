@@ -1,4 +1,4 @@
 
 TO install: 
   Django Rest Framwork
-  Django admin bootstrap
+  Django admin bootstrapped

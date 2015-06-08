@@ -16,6 +16,20 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+from rest_framework import routers, serializers, viewsets
+from web.viewsets import *
+
+# Routers provide an easy way of automatically determining the URL conf.
+router = routers.DefaultRouter()
+router.register(r'Restaurantes', RestaurantViewSet)
+router.register(r'Platos', DishViewSet)
+router.register(r'Platos de restaurant', RestaurantDishViewSet)
+router.register(r'Categorias', CategoryViewSet)
+router.register(r'Evaluacion', EvaluationViewSet)
+
 urlpatterns = [
+    url(r'^', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+
 ]

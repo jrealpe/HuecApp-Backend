@@ -33,13 +33,13 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = (
     'web',
     'rest_framework',
-    'django_admin_bootstrapped',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_admin_bootstrapped',
 )
 
 MIDDLEWARE_CLASSES = (

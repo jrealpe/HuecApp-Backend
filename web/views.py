@@ -104,10 +104,10 @@ def login(request):
         # Return an 'invalid login' error message.
          return HttpResponseBadRequest('Usuario o clave incorrecto')
 
-         
+        
+from django.contrib.auth import logout
 @never_cache
 def logout(request):
-    from django.contrib.auth import logout
     logout(request)
     return redirect('/')
 

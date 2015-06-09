@@ -32,6 +32,8 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^signup/', 'web.views.signup'),
     url(r'^top/', 'web.views.getTop'),
+    url(r'^login/', 'web.views.login'),
+    url(r'^logout/', 'web.views.logout'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 
 ]

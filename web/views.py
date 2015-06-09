@@ -1,14 +1,41 @@
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response, redirect
 from django.template import RequestContext
 import json
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseForbidden
-
+from web.models import *
 # Create your views here.
 
+#@login_required
+def getTop(request):
+    if request.method == 'GET':
+        try:
+            category = request.GET['category']
+        except:
+            category = None
+        if category is None:
+            query = 'SELECT * FROM web_restaurantdish WHERE id in\
+                    (SELECT tb_evaluations.restaurantdish_id FROM\
+                    (SELECT DISTINCT restaurantdish_id, count(evaluation) as sum \
+                    FROM web_evaluation GROUP BY restaurantdish_id ORDER BY sum DESC LIMIT 5)\
+                    as tb_evaluations)'
+        else:
+            query = 'SELECT * FROM web_restaurantdish WHERE id in\
+                    (SELECT tb_evaluations.restaurantdish_id FROM \
+                    (SELECT DISTINCT restaurantdish_id, count(evaluation)\
+                    as sum FROM web_evaluation WHERE category_id = '+category +'\
+                    GROUP BY restaurantdish_id ORDER BY sum DESC LIMIT 5) as tb_evaluations)'
 
-
+        dishes = RestaurantDish.objects.raw(query) 
+        response = render_to_response(
+            'json/dishes.json',
+            {'dishes': dishes},
+            context_instance=RequestContext(request)
+        )
+        response['Content-Type'] = 'application/json; charset=utf-8'
+        response['Cache-Control'] = 'no-cache'
+        return response
 
 def get_user(email, username):
     mail = User.objects.get(email=email.lower())

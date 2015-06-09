@@ -34,6 +34,15 @@ class RestaurantDish(models.Model):
     dish = models.ForeignKey(Dish)
     price = models.DecimalField(max_digits = 10, decimal_places = 3)
 
+    def votes(self):
+        votes = Evaluation.objects.filter(restaurantdish = self)
+        total = 0
+        cont = 0
+        for vote in votes:
+            cont = cont + 1
+            total = total + vote.evaluation
+        return str(total)
+
     def __unicode__(self):
         return self.dish.name
  

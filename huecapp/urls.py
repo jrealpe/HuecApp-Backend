@@ -23,7 +23,7 @@ from web.viewsets import *
 router = routers.DefaultRouter()
 router.register(r'Restaurantes', RestaurantViewSet)
 router.register(r'Platos', DishViewSet)
-router.register(r'Platos de restaurant', RestaurantDishViewSet)
+router.register(r'RestaurantPlato', RestaurantDishViewSet)
 router.register(r'Categorias', CategoryViewSet)
 router.register(r'Evaluacion', EvaluationViewSet)
 

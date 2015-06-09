@@ -43,6 +43,9 @@ class RestaurantDish(models.Model):
             total = total + vote.evaluation
         return str(total)
 
+    def nvotes(self):
+        return str(Evaluation.objects.filter(restaurantdish = self).count())
+
     def __unicode__(self):
         return self.dish.name
  

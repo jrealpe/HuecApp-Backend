@@ -7,7 +7,9 @@
             "name": "{{ restdish.dish.name }}",
             "price": "{{ restdish.price}}",
             "restaurant": "{{ restdish.restaurant.name}}",
-            "votes": "{{ restdish.votes }}"
+            "votes": "{{ restdish.votes }}",
+            "nvotes": "{{ restdish.nvotes }}"
+
             
         }{% if not forloop.last %},{% endif %}
     {% endfor %}

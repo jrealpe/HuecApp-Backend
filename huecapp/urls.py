@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-
+from web.views import *
 from rest_framework import routers, serializers, viewsets
 from web.viewsets import *
 
@@ -30,6 +30,7 @@ router.register(r'Evaluacion', EvaluationViewSet)
 urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^signup/', 'web.views.signup'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 
 ]

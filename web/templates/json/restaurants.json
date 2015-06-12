@@ -1,0 +1,16 @@
+{% spaceless %}
+{  "results":
+    [
+    {% for rest in restaurants %}
+        {
+            "id": "{{ rest.id }}",
+            "name": "{{ rest.name }}",
+            "price": "{{ rest.latitude}}",
+            "restaurant": "{{ rest.longitude}}",
+            "image": "{{ rest.image_restaurant}}"
+                
+        }{% if not forloop.last %},{% endif %}
+    {% endfor %}
+    ]
+}
+{% endspaceless %}

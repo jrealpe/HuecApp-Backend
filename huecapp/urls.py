@@ -18,6 +18,8 @@ from django.contrib import admin
 from web.views import *
 from rest_framework import routers, serializers, viewsets
 from web.viewsets import *
+from django.conf import settings
+from django.conf.urls.static import static
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
@@ -32,8 +34,9 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^signup/', 'web.views.signup'),
     url(r'^top/', 'web.views.getTop'),
+    url(r'^restaurants/', 'web.views.getRestaurants'),
     url(r'^login/', 'web.views.login'),
     url(r'^logout/', 'web.views.logout'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 
-]
+] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

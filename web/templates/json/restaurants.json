@@ -5,9 +5,9 @@
         {
             "id": "{{ rest.id }}",
             "name": "{{ rest.name }}",
-            "price": "{{ rest.latitude}}",
-            "restaurant": "{{ rest.longitude}}",
-            "image": "{{ rest.image_restaurant}}"
+            "latitude": "{{ rest.latitude}}",
+            "longitude": "{{ rest.longitude}}",
+            "image_restaurant": "{{ rest.image_restaurant}}"
                 
         }{% if not forloop.last %},{% endif %}
     {% endfor %}

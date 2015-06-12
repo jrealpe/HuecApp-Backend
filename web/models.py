@@ -15,7 +15,7 @@ class Restaurant(models.Model):
     def save(self, *args, **kwargs):
         for field in self._meta.fields:
             if field.name == 'image_restaurant':
-                field.upload_to = 'restaurants/%s' % self.restaurant.strip()
+                field.upload_to = 'restaurants/%s' % self.name.strip()
                 super(Restaurant,self).save(*args, **kwargs)
     
     def __unicode__(self):
@@ -47,7 +47,7 @@ class RestaurantDish(models.Model):
     def save(self, *args, **kwargs):
         for field in self._meta.fields:
             if field.name == 'image_dish':
-                field.upload_to = 'restaurants/%s' % self.restaurant.strip()
+                field.upload_to = 'restaurants/%s' % self.dish.name.strip()
                 super(RestaurantDish,self).save(*args, **kwargs)
     
     def votes(self):

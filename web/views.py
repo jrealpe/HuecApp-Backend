@@ -110,7 +110,7 @@ def getRestaurants(request):
 
     if request.method == "GET":
         restaurants = Restaurant.objects.all()
-
+ 
         response = render_to_response(
             'json/restaurants.json',
             {'restaurants': restaurants},

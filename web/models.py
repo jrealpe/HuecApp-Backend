@@ -49,7 +49,9 @@ class RestaurantDish(models.Model):
     def save(self, *args, **kwargs):
         for field in self._meta.fields:
             if field.name == 'image_dish':
-                field.upload_to = 'restaurants/%s' % self.dish.name.strip()
+                import re
+                term = re.sub(r'\s+', ' ', self.dish.name.strip())
+                field.upload_to = 'restaurants/%s' % term
                 super(RestaurantDish,self).save(*args, **kwargs)
     
     def votes(self):

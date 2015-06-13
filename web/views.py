@@ -26,7 +26,6 @@ def getTop(request):
                     FROM web_evaluation GROUP BY restaurantdish_id ORDER BY sum DESC LIMIT 5)\
                     as tb_evaluations, web_restaurantdish WHERE web_restaurantdish.id =tb_evaluations.restaurantdish_id AND tb_evaluations.category_id ='+ category
 
-
         dishes = RestaurantDish.objects.raw(query)
         response = render_to_response(
             'json/dishes.json',
@@ -40,10 +39,6 @@ def getTop(request):
 def get_user(email, username):
     mail = User.objects.filter(email=email.lower())
     nick = User.objects.filter(username = username.lower())
-    print mail
-    print nick
-    print len(mail)
-    print len(nick)
     return not(len(mail)>0 or len(nick)>0)
 
 
@@ -56,8 +51,6 @@ def signup(request):
         first_name = request.POST['first_name']
         password = request.POST['password']
         exist = get_user(email, username)
-
-        print exist
         if exist:
             user = User.objects.create_user(username, email, password)
             user.first_name = first_name
@@ -65,7 +58,7 @@ def signup(request):
             user.save()
             #user = authenticate(username=user, password=password)
             #login
-            response = { 'user' : user.username }
+            response = { 'id' : user.id }
             response['status'] = 'ok'
             return HttpResponse(json.dumps(response))
         else:
@@ -94,7 +87,7 @@ def login(request):
         if user.is_active:
             login(request, user)
             response_content = {
-                'username': user.username,
+                'username': user,
             }
             response =  HttpResponse(json.dumps(response_content))
             response['Content-Type'] = 'application/json; charset=utf-8'

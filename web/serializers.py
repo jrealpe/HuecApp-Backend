@@ -9,10 +9,6 @@ class GCMDeviceSerializer(serializers.ModelSerializer):
         #field = ('name','is_active'.'user','device_id','registration_id')
         field = ('objects','device_id','registration_id')
 
-#class UsuarioSerializer(serializers.ModelSerializer):
-#    class Meta:
-#        model = Usuario
-#        fields = ('id','username', 'password',)
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta: 
         model = Restaurant
@@ -24,9 +20,13 @@ class DishSerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 class RestaurantDishSerializer(serializers.ModelSerializer):
+    votes = serializers.SerializerMethodField()
     class Meta:
         model = RestaurantDish
-        fields = ('id', 'restaurant', 'dish', 'price', 'image_dish')
+        fields = ('id', 'restaurant', 'dish', 'price', 'image_dish', 'votes')
+
+    def get_votes(self, obj):
+        return str(obj.votes())
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

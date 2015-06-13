@@ -10,7 +10,7 @@ class Restaurant(models.Model):
     latitude = models.FloatField(null = True)
     longitude = models.FloatField(null = True)
     image_restaurant = models.ImageField(upload_to='restaurants/',null = True)
-
+    description = models.TextField(max_length = 512, null = True)
     
     def save(self, *args, **kwargs):
         for field in self._meta.fields:

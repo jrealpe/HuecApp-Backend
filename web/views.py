@@ -2,6 +2,11 @@ from django.shortcuts import render, render_to_response, redirect
 from django.template import RequestContext
 import json
 from django.views.decorators.csrf import csrf_exempt
+from push_notifications.models import GCMDevice,APNSDevice
+
+from rest_framework import viewsets
+from serializers import *
+
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseForbidden

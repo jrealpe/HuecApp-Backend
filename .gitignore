@@ -3,6 +3,7 @@
 /huecapp/wsgi*.py
 /carga
 /media
+/env
 /static
 backup-file.sql
 db.sqlite3

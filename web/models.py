@@ -9,7 +9,15 @@ class Restaurant(models.Model):
     place = models.CharField(max_length = 128)
     latitude = models.FloatField(null = True)
     longitude = models.FloatField(null = True)
-  
+    image_restaurant = models.ImageField(upload_to='restaurants/',null = True)
+
+    
+    def save(self, *args, **kwargs):
+        for field in self._meta.fields:
+            if field.name == 'image_restaurant':
+                field.upload_to = 'restaurants/%s' % self.name.strip()
+                super(Restaurant,self).save(*args, **kwargs)
+    
     def __unicode__(self):
         return self.name
   
@@ -33,7 +41,15 @@ class RestaurantDish(models.Model):
     restaurant = models.ForeignKey(Restaurant)
     dish = models.ForeignKey(Dish)
     price = models.DecimalField(max_digits = 10, decimal_places = 3)
+    image_dish = models.ImageField(upload_to='restaurants/',null = True)
 
+    
+    def save(self, *args, **kwargs):
+        for field in self._meta.fields:
+            if field.name == 'image_dish':
+                field.upload_to = 'restaurants/%s' % self.dish.name.strip()
+                super(RestaurantDish,self).save(*args, **kwargs)
+    
     def votes(self):
         votes = Evaluation.objects.filter(restaurantdish = self)
         total = 0
@@ -57,10 +73,3 @@ class Evaluation(models.Model):
     restaurantdish = models.ForeignKey(RestaurantDish, related_name = 'evaluations')
     category = models.ForeignKey(Category, related_name = 'evaluations')
     evaluation = models.PositiveSmallIntegerField()
-
-
-
-    
-
-
-

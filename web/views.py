@@ -114,4 +114,18 @@ def logout(request):
     logout(request)
     return redirect('/')
 
+@never_cache
+def getRestaurants(request):
+
+    if request.method == "GET":
+        restaurants = Restaurant.objects.all()
+ 
+        response = render_to_response(
+            'json/restaurants.json',
+            {'restaurants': restaurants},
+            context_instance=RequestContext(request)
+        )
+        response['Content-Type'] = 'application/json; charset=utf-8'
+        response['Cache-Control'] = 'no-cache'
+        return response
 

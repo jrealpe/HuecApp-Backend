@@ -1,6 +1,14 @@
 from rest_framework import serializers
 from web.models import *
 
+from push_notifications.models import GCMDevice
+
+class GCMDeviceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GCMDevice
+        #field = ('name','is_active'.'user','device_id','registration_id')
+        field = ('objects','device_id','registration_id')
+
 #class UsuarioSerializer(serializers.ModelSerializer):
 #    class Meta:
 #        model = Usuario

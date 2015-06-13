@@ -20,6 +20,7 @@ from rest_framework import routers, serializers, viewsets
 from web.viewsets import *
 from django.conf import settings
 from django.conf.urls.static import static
+from pushes.views import *
 
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
@@ -28,6 +29,8 @@ router.register(r'Platos', DishViewSet)
 router.register(r'RestaurantPlato', RestaurantDishViewSet)
 router.register(r'Categorias', CategoryViewSet)
 router.register(r'Evaluacion', EvaluationViewSet)
+router.register(r'GCMDevice',GCMDeviceViewSet)
+
 
 urlpatterns = [
     url(r'^', include(router.urls)),
@@ -37,6 +40,7 @@ urlpatterns = [
     url(r'^restaurants/', 'web.views.getRestaurants'),
     url(r'^login/', 'web.views.login'),
     url(r'^logout/', 'web.views.logout'),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^pushes/', 'pushes.views.push_notifications_view', name='push_notifications_view'),
 
 ] + static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

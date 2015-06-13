@@ -18,10 +18,10 @@ class Restaurant(models.Model):
                 import re
                 term = re.sub(r'\s+', ' ', self.name.strip())
                 field.upload_to = 'restaurants/%s' % term
-                super(Restaurant,self).save(*args, **kwags)
+                super(Restaurant,self).save(*args, **kwargs)
     
     def __unicode__(self):
-        return self.name
+       return self.name.strip()
   
     class Meta:
         verbose_name = 'Restaurante'
@@ -51,7 +51,7 @@ class RestaurantDish(models.Model):
             if field.name == 'image_dish':
                 import re
                 term = re.sub(r'\s+', ' ', self.dish.name.strip())
-                field.upload_to = 'restaurants/%s' % term
+                field.upload_to = 'restaurantsdish/%s' % term
                 super(RestaurantDish,self).save(*args, **kwargs)
     
     def votes(self):
@@ -71,6 +71,7 @@ class RestaurantDish(models.Model):
  
 class Category(Text):
     pass
+
 
 class Evaluation(models.Model):
     user = models.ForeignKey(User, related_name = 'evaluations')

@@ -6,6 +6,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseForbidden
 from web.models import *
+from push_notifications.models import GCMDevice,APNSDevice
+
 # Create your views here.
 
 #@login_required
@@ -139,4 +141,43 @@ def getRestaurants(request):
         response['Content-Type'] = 'application/json; charset=utf-8'
         response['Cache-Control'] = 'no-cache'
         return response
+
+def push_notifications_view(request):
+    if request.method == "POST":
+        if 'code' in request.POST:
+            code = request.POST['code']
+
+            devices = GCMDevice.objects.all()
+            devices.send_message("Pruebaaaaa !!!")
+            message = "message sent to android devices"
+
+
+            #if code == 'android':
+            #    print 'code == android'
+            #    devices = GCMDevice.objects.all()
+            #    devices.send_message({"message": "Hi Android!"})
+            #    message = "message sent to android devices"
+
+            #elif code == 'ios':
+            #    print 'code == ios'
+            #    devices = APNSDevice.objects.all()
+            #    devices.send_message("Hi iOS!")
+            #    message = "message sent to ios devices"
+
+            #elif code == 'simple':
+            #    print 'code == simple'
+
+            #    device = APNSDevice.objects.get(registration_id='mi apns token')
+            #    device.send_message(None, extra={"foo": "bar"})
+            #    message = "simple message sent"
+
+    return render_to_response('main.html', locals(), context_instance=RequestContext(request))
+
+
+class GCMDeviceViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows words to be viewed or edited.
+    """
+    queryset = GCMDevice.objects.all()
+    serializer_class = GCMDeviceSerializer
 

@@ -40,6 +40,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_admin_bootstrapped',
+    'push_notifications',
+
 )
 
 MIDDLEWARE_CLASSES = (

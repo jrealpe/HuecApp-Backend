@@ -8,7 +8,7 @@ from web.models import *
 class RestaurantSerializer(serializers.ModelSerializer):
     class Meta: 
         model = Restaurant
-        fields = ('id', 'name', 'place', 'longitude', 'latitude')
+        fields = ('id', 'name', 'place', 'longitude', 'latitude', 'image_restaurant')
 
 class DishSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,7 +18,7 @@ class DishSerializer(serializers.ModelSerializer):
 class RestaurantDishSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantDish
-        fields = ('id', 'restaurant', 'dish', 'price')
+        fields = ('id', 'restaurant', 'dish', 'price', 'image_dish')
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:

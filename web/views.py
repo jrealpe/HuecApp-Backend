@@ -1,6 +1,7 @@
 from django.shortcuts import render, render_to_response, redirect
 from django.template import RequestContext
 import json
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseForbidden
@@ -24,9 +25,9 @@ def getTop(request):
                     (SELECT DISTINCT restaurantdish_id, category_id, SUM(evaluation) as sum \
                     FROM web_evaluation GROUP BY restaurantdish_id ORDER BY sum DESC LIMIT 5)\
                     as tb_evaluations, web_restaurantdish WHERE web_restaurantdish.id =tb_evaluations.restaurantdish_id AND tb_evaluations.category_id ='+ category
-                    
 
-        dishes = RestaurantDish.objects.raw(query) 
+
+        dishes = RestaurantDish.objects.raw(query)
         response = render_to_response(
             'json/dishes.json',
             {'dishes': dishes},
@@ -37,11 +38,16 @@ def getTop(request):
         return response
 
 def get_user(email, username):
-    mail = User.objects.get(email=email.lower())
-    nick = User.objects.get(username = username.lower())
-    return not(mail is None) or not(nick is None)
+    mail = User.objects.filter(email=email.lower())
+    nick = User.objects.filter(username = username.lower())
+    print mail
+    print nick
+    print len(mail)
+    print len(nick)
+    return not(len(mail)>0 or len(nick)>0)
 
 
+@csrf_exempt
 def signup(request):
     if request.method == "POST":
         username = request.POST['username']
@@ -50,25 +56,28 @@ def signup(request):
         first_name = request.POST['first_name']
         password = request.POST['password']
         exist = get_user(email, username)
-        if exist is None:
+
+        print exist
+        if exist:
             user = User.objects.create_user(username, email, password)
             user.first_name = first_name
             user.last_name = last_name
             user.save()
-            user = authenticate(username=user, password=password)
+            #user = authenticate(username=user, password=password)
             #login
-            response = { 'user' : user }
+            response = { 'user' : user.username }
             response['status'] = 'ok'
             return HttpResponse(json.dumps(response))
         else:
             #messages
-            response = {'error':'ya existe el nombre de usuario o esta registrado'} 
+            response = {'error':'ya existe el nombre de usuario o esta registrado'}
 
         return HttpResponseBadRequest(json.dumps(response))
     elif request.method == "GET":
         return HttpResponse(json.dumps({}))
 
 @never_cache
+@csrf_exempt
 def login(request):
     #if not request.is_ajax() or request.method != 'GET':
     #    return
@@ -98,7 +107,7 @@ def login(request):
         # Return an 'invalid login' error message.
         return HttpResponseBadRequest('Usuario o clave incorrecto')
 
-        
+
 from django.contrib.auth import logout
 @never_cache
 def logout(request):
@@ -110,7 +119,7 @@ def getRestaurants(request):
 
     if request.method == "GET":
         restaurants = Restaurant.objects.all()
-
+ 
         response = render_to_response(
             'json/restaurants.json',
             {'restaurants': restaurants},

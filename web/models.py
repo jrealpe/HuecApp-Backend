@@ -15,7 +15,7 @@ class Restaurant(models.Model):
     def save(self, *args, **kwargs):
         for field in self._meta.fields:
             if field.name == 'image_restaurant':
-                field.upload_to = 'restaurants/%s' % term.replace(' ','')
+                field.upload_to = 'restaurants/%s' % self.name.replace(' ','')
                 super(Restaurant,self).save(*args, **kwargs)
     
     def __unicode__(self):

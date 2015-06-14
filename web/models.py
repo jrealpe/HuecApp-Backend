@@ -2,7 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Restaurant(models.Model):
     name = models.CharField(max_length = 64)
@@ -15,9 +15,7 @@ class Restaurant(models.Model):
     def save(self, *args, **kwargs):
         for field in self._meta.fields:
             if field.name == 'image_restaurant':
-                import re
-                term = re.sub(r'\s+', ' ', self.name.strip())
-                field.upload_to = 'restaurants/%s' % term
+                field.upload_to = 'restaurants/%s' % term.replace(' ','')
                 super(Restaurant,self).save(*args, **kwargs)
     
     def __unicode__(self):
@@ -49,9 +47,7 @@ class RestaurantDish(models.Model):
     def save(self, *args, **kwargs):
         for field in self._meta.fields:
             if field.name == 'image_dish':
-                import re
-                term = re.sub(r'\s+', ' ', self.dish.name.strip())
-                field.upload_to = 'restaurantsdish/%s' % term
+                field.upload_to = 'restaurantsdish/%s' % term.replace(' ','')
                 super(RestaurantDish,self).save(*args, **kwargs)
     
     def votes(self):
@@ -77,4 +73,5 @@ class Evaluation(models.Model):
     user = models.ForeignKey(User, related_name = 'evaluations')
     restaurantdish = models.ForeignKey(RestaurantDish, related_name = 'evaluations')
     category = models.ForeignKey(Category, related_name = 'evaluations')
-    evaluation = models.PositiveSmallIntegerField()
+    evaluation = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
+

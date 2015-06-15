@@ -53,7 +53,7 @@ class RestaurantDish(models.Model):
         cont = 0
         for vote in votes:
             cont = cont + 1
-            total = total + vote.evaluation
+            total = total + vote.points
         return str(total)
 
     def nvotes(self):

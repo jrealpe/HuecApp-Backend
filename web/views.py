@@ -13,51 +13,49 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadReque
 from web.models import *
 from push_notifications.models import GCMDevice,APNSDevice
 
-# Create your views here.
-
-#@login_required
-def getTop(request):
-    if request.method == 'GET':
-        try:
-            category = request.GET['category']
-        except:
-            category = None
-        if category is None:
-            query = 'SELECT web_restaurantdish.* FROM\
-                    (SELECT DISTINCT restaurantdish_id, SUM(evaluation) as sum \
-                    FROM web_evaluation GROUP BY restaurantdish_id ORDER BY sum DESC LIMIT 5)\
-                    as tb_evaluations, web_restaurantdish WHERE web_restaurantdish.id =tb_evaluations.restaurantdish_id  '
-        else:
-            query = 'SELECT web_restaurantdish.* FROM\
-                    (SELECT DISTINCT restaurantdish_id, category_id, SUM(evaluation) as sum \
-                    FROM web_evaluation GROUP BY restaurantdish_id ORDER BY sum DESC LIMIT 5)\
-                    as tb_evaluations, web_restaurantdish WHERE web_restaurantdish.id =tb_evaluations.restaurantdish_id AND tb_evaluations.category_id ='+ category
-
-        dishes = RestaurantDish.objects.raw(query)
-        response = render_to_response(
-            'json/dishes.json',
-            {'dishes': dishes},
-            context_instance=RequestContext(request)
-        )
-        response['Content-Type'] = 'application/json; charset=utf-8'
-        response['Cache-Control'] = 'no-cache'
-        return response
-
-def getFinalTop(request):
-    if request.method == 'GET':
-        categorys = Category.objects.all()
-        dishes = []
+def getDishesCategory(categorys):
+    result = []
+    name = ''
+    last = ''
+    for category in categorys:
+        name = name + last +str(category.evaluation.id)
+        last =' ,'
+    count = len(categorys)
+    sql =' SELECT * from web_restaurantdish WHERE id in (\
+            SELECT final.restaurantdish_id\
+             FROM (SELECT * FROM (web_evaluationcriteria)\
+             WHERE evaluation_id IN ('+name+') GROUP  BY restaurantdish_id\
+                 HAVING Count(DISTINCT id) = '+str(count)+') as final) '
+    dishes = RestaurantDish.objects.raw(sql)
+    result = []
+    for dish in dishes:
+        votes = 0
         for category in categorys:
-            query = 'SELECT web_restaurantdish.* FROM\
-                        (SELECT DISTINCT restaurantdish_id, category_id, SUM(evaluation) as sum \
-                        FROM web_evaluation GROUP BY restaurantdish_id ORDER BY sum DESC LIMIT 5)\
-                        as tb_evaluations, web_restaurantdish WHERE web_restaurantdish.id =tb_evaluations.restaurantdish_id AND tb_evaluations.category_id ='+ str(category.id)
+            for evaluation in EvaluationCriteria.objects.filter(restaurantdish = dish, evaluation = category.evaluation):
+                votes = votes + evaluation.points
+        result.append((dish,votes))
+    return  result
 
-            for d in RestaurantDish.objects.raw(query):
-                dishes.append((category.name,d))
-
+def getTopFull(request):
+    if request.method == 'GET':
+        id_category = 0
+        try:
+            id_category = request.GET.get('category', False)
+        except:
+            id_category = 0
+        if (id_category ==0):
+            categorys = Category.objects.all()
+        else:
+            categorys = Category.objects.filter(pk = id_category)
+        results = []
+        for category in categorys:
+            evaluations = CategoryCriteria.objects.filter(category = category)
+            from operator import itemgetter, attrgetter
+            result = getDishesCategory(evaluations)
+            results.append((category, sorted(result, key=itemgetter(1), reverse = True)))
+        dishes = results
         response = render_to_response(
-            'json/win.json',
+            'json/category_dishes.json',
             {'dishes': dishes},
             context_instance=RequestContext(request)
         )

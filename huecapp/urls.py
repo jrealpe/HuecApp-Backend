@@ -37,7 +37,7 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^signup/', 'web.views.signup'),
-    url(r'^top/', 'web.views.getTop'),
+    url(r'^top/', 'web.views.getTopFull'),
     url(r'^win/', 'web.views.getFinalTop'),
     url(r'^restaurants/', 'web.views.getRestaurants'),
     url(r'^login/', 'web.views.login'),

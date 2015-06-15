@@ -43,6 +43,29 @@ def getTop(request):
         response['Cache-Control'] = 'no-cache'
         return response
 
+def getFinalTop(request):
+    if request.method == 'GET':
+        categorys = Category.objects.all()
+        dishes = []
+        for category in categorys:
+            query = 'SELECT web_restaurantdish.* FROM\
+                        (SELECT DISTINCT restaurantdish_id, category_id, SUM(evaluation) as sum \
+                        FROM web_evaluation GROUP BY restaurantdish_id ORDER BY sum DESC LIMIT 5)\
+                        as tb_evaluations, web_restaurantdish WHERE web_restaurantdish.id =tb_evaluations.restaurantdish_id AND tb_evaluations.category_id ='+ str(category.id)
+
+            for d in RestaurantDish.objects.raw(query):
+                dishes.append((category.name,d))
+
+        response = render_to_response(
+            'json/win.json',
+            {'dishes': dishes},
+            context_instance=RequestContext(request)
+        )
+        response['Content-Type'] = 'application/json; charset=utf-8'
+        response['Cache-Control'] = 'no-cache'
+        return response
+
+
 def get_user(email, username):
     mail = User.objects.filter(email=email.lower())
     nick = User.objects.filter(username = username.lower())

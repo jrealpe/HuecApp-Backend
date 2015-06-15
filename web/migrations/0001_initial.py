@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 from django.conf import settings
+import django.core.validators
 
 
 class Migration(migrations.Migration):
@@ -23,7 +24,14 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Dish',
+            name='CategoryCriteria',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('category', models.ForeignKey(related_name='evaluations', to='web.Category')),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Evaluation',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=128)),
@@ -33,11 +41,11 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Evaluation',
+            name='EvaluationCriteria',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('evaluation', models.PositiveSmallIntegerField()),
-                ('category', models.ForeignKey(related_name='evaluations', to='web.Category')),
+                ('points', models.IntegerField(validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(5)])),
+                ('evaluation', models.ForeignKey(related_name='restaurantadishes', to='web.Evaluation')),
             ],
         ),
         migrations.CreateModel(
@@ -48,6 +56,8 @@ class Migration(migrations.Migration):
                 ('place', models.CharField(max_length=128)),
                 ('latitude', models.FloatField(null=True)),
                 ('longitude', models.FloatField(null=True)),
+                ('image_restaurant', models.ImageField(null=True, upload_to=b'restaurants/')),
+                ('description', models.TextField(max_length=512, null=True)),
             ],
             options={
                 'verbose_name': 'Restaurante',
@@ -58,24 +68,35 @@ class Migration(migrations.Migration):
             name='RestaurantDish',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('price', models.DecimalField(max_digits=10, decimal_places=3)),
-                ('dish', models.ForeignKey(to='web.Dish')),
+                ('name', models.CharField(max_length=128)),
+                ('price', models.DecimalField(max_digits=10, decimal_places=2)),
+                ('image_dish', models.ImageField(null=True, upload_to=b'restaurants/')),
                 ('restaurant', models.ForeignKey(to='web.Restaurant')),
             ],
         ),
         migrations.AddField(
-            model_name='evaluation',
+            model_name='evaluationcriteria',
             name='restaurantdish',
             field=models.ForeignKey(related_name='evaluations', to='web.RestaurantDish'),
         ),
         migrations.AddField(
-            model_name='evaluation',
+            model_name='evaluationcriteria',
             name='user',
             field=models.ForeignKey(related_name='evaluations', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
-            model_name='dish',
-            name='restaurant',
-            field=models.ManyToManyField(to='web.Restaurant', through='web.RestaurantDish'),
+            model_name='evaluation',
+            name='evaluations',
+            field=models.ManyToManyField(to='web.RestaurantDish', through='web.EvaluationCriteria'),
+        ),
+        migrations.AddField(
+            model_name='categorycriteria',
+            name='evaluation',
+            field=models.ForeignKey(related_name='categorys', to='web.Evaluation'),
+        ),
+        migrations.AddField(
+            model_name='category',
+            name='categorys',
+            field=models.ManyToManyField(to='web.Evaluation', through='web.CategoryCriteria'),
         ),
     ]

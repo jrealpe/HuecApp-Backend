@@ -8,11 +8,6 @@ class RestaurantViewSet(viewsets.ModelViewSet):
     serializer_class = RestaurantSerializer
     queryset = Restaurant.objects.all()
 
-class DishViewSet(viewsets.ModelViewSet):
-    serializer_class = DishSerializer
-    queryset = Dish.objects.all()
-
-
 class RestaurantDishViewSet(viewsets.ModelViewSet):
     serializer_class = RestaurantDishSerializer
     queryset = RestaurantDish.objects.all()
@@ -28,12 +23,21 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
 
+class CategoryCriteriaViewSet(viewsets.ModelViewSet):
+    serializer_class = CategoryCriteriaSerializer
+    queryset = CategoryCriteria.objects.all()
+
 class EvaluationViewSet(viewsets.ModelViewSet):
     serializer_class = EvaluationSerializer
     queryset = Evaluation.objects.all()
 
+
+class EvaluationCriteriaViewSet(viewsets.ModelViewSet):
+    serializer_class = EvaluationCriteriaSerializer
+    queryset = EvaluationCriteria.objects.all()
+
     def get_queryset(self):
-        queryset = Evaluation.objects.all()
+        queryset = EvaluationCriteria.objects.all()
         restaurantdish = self.request.query_params.get('restaurantdish', None)
         user = self.request.query_params.get('username', None)
         if user is not None:

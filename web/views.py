@@ -39,10 +39,11 @@ def getDishesCategory(categorys):
 def getTopFull(request):
     if request.method == 'GET':
         id_category = 0
+        id_category = request.GET.get('category', False)
         try:
-            id_category = request.GET.get('category', False)
+            id_category = int(id_category)
         except:
-            id_category = 0
+            return HttpResponseBadRequest(json.dumps({'error':'parametros errados'}))
         if (id_category ==0):
             categorys = Category.objects.all()
         else:
@@ -66,7 +67,66 @@ def getTopFull(request):
  #       response['Cache-Control'] = 'no-cache'
   #      return response
 
+def getByFilter(request):
+    if request.method == 'GET':
+        name =  request.GET.get('name', False)
+        restaurant = request.GET.get('restaurant', False)
+        category = request.GET.get('category', False)
+        filters = []
+        results = []
+        for f in [('name',name), ('restaurant',restaurant), ('category',category)]:
+            if (f[1]):
+                    filters.append((f))
+        dishes = []
+        for f in filters:
+            if(f[0]=='name'):
+                dishes = RestaurantDish.objects.filter(name__contains =f[1])
+                results = dishes
+                if (len(results)==0):
+                    break
+            elif(f[0]=='restaurant'):
+                if(len(dishes)==0):
+                    dishes = RestaurantDish.objects.filter(restaurant = f[1])
+                    results = dishes
+                    if (len(results)==0):
+                        break
+                else:
+                    results = []
+                    for d in dishes:
+                        if (str(d.restaurant.id) == str(f[1])):
+                            results.append(d)
+                    if (len(results)==0):
+                        break
+                    dishes = results
+            elif(f[0]=='category'):
+                categorys = Category.objects.filter(pk = f[1])
+                if (len(categorys)>0):
+                    evaluations = CategoryCriteria.objects.filter(category = categorys)
+                    from operator import itemgetter, attrgetter
+                    result = getDishesCategory(evaluations)
+                    if(len(dishes)==0):
+                        for r in result:
+                            results.append(r[0])
+                    else:
+                        results=[]
+                        for d in dishes:
+                            for r in result:
+                                if(r[0].id == d.id):
+                                   results.append(d)
+                else:
+                    return HttpResponseBadRequest(json.dumps({'error':'parametros errados'}))
 
+        dishes = results
+        response = render_to_response(
+            'json/dishes.json',
+            {'dishes': dishes},
+            context_instance=RequestContext(request)
+        )
+        response['Content-Type'] = 'application/json; charset=utf-8'
+        response['Cache-Control'] = 'no-cache'
+        return response
+
+  
 def get_user(email, username):
     mail = User.objects.filter(email=email.lower())
     nick = User.objects.filter(username = username.lower())
@@ -118,10 +178,11 @@ def login(request):
         if user.is_active:
             login(request, user)
             response_content = {
+                'id':user.id,
                 'username': user.username,
-                'email': user.mail,
+                'email': user.email,
                 'firstname': user.first_name,
-                'lastname': user.lastname,
+                'lastname': user.last_name,
             }
             response =  HttpResponse(json.dumps(response_content))
             response['Content-Type'] = 'application/json; charset=utf-8'

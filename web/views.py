@@ -104,6 +104,7 @@ def getByFilter(request):
                     evaluations = CategoryCriteria.objects.filter(category = categorys)
                     from operator import itemgetter, attrgetter
                     result = getDishesCategory(evaluations)
+                    result = sorted(result, key=itemgetter(1), reverse = True)
                     if(len(dishes)==0):
                         for r in result:
                             results.append(r[0])

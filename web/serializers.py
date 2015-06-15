@@ -14,16 +14,11 @@ class RestaurantSerializer(serializers.ModelSerializer):
         model = Restaurant
         fields = ('id', 'name', 'place', 'longitude', 'latitude', 'image_restaurant')
 
-class DishSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Dish
-        fields = ('id', 'name')
-
 class RestaurantDishSerializer(serializers.ModelSerializer):
     votes = serializers.SerializerMethodField()
     class Meta:
         model = RestaurantDish
-        fields = ('id', 'restaurant', 'dish', 'price', 'image_dish', 'votes')
+        fields = ('id', 'restaurant', 'name', 'price', 'image_dish', 'votes')
 
     def get_votes(self, obj):
         return str(obj.votes())
@@ -33,10 +28,25 @@ class CategorySerializer(serializers.ModelSerializer):
         model = Category
         fields = ('id', 'name')
 
+class CategoryCriteriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CategoryCriteria
+        fields = ('id', 'evaluation', 'category')
+
 class EvaluationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Evaluation
-        fields = ('id', 'user', 'restaurantdish', 'category', 'evaluation')
+        fields = ('id', 'name')
+
+class EvaluationCriteriaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EvaluationCriteria
+        fields = ('id', 'evaluation', 'restaurantdish', 'user', 'points')
+
+class EvaluationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Evaluation
+        fields = ('id', 'name')
 
 
 

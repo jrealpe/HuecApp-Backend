@@ -25,9 +25,10 @@ from django.conf.urls.static import static
 # Routers provide an easy way of automatically determining the URL conf.
 router = routers.DefaultRouter()
 router.register(r'Restaurantes', RestaurantViewSet)
-router.register(r'Platos', DishViewSet)
 router.register(r'RestaurantPlato', RestaurantDishViewSet)
 router.register(r'Categorias', CategoryViewSet)
+router.register(r'CriterioCategoria', CategoryCriteriaViewSet)
+router.register(r'CriterioEvaluacion', EvaluationCriteriaViewSet)
 router.register(r'Evaluacion', EvaluationViewSet)
 router.register(r'GCMDevice',GCMDeviceViewSet)
 
@@ -36,7 +37,8 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^signup/', 'web.views.signup'),
-    url(r'^top/', 'web.views.getTop'),
+    url(r'^top/', 'web.views.getTopFull'),
+    url(r'^filter/', 'web.views.getByFilter'),
     url(r'^restaurants/', 'web.views.getRestaurants'),
     url(r'^login/', 'web.views.login'),
     url(r'^logout/', 'web.views.logout'),

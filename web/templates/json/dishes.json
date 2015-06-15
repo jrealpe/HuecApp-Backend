@@ -4,7 +4,7 @@
     {% for restdish in dishes %}
         {
             "id": "{{ restdish.id }}",
-            "name": "{{ restdish.dish.name }}",
+            "name": "{{ restdish.name }}",
             "price": "{{ restdish.price}}",
             "restaurant": "{{ restdish.restaurant.name}}",
             "votes": "{{ restdish.votes }}",

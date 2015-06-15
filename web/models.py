@@ -2,7 +2,7 @@
 
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Restaurant(models.Model):
     name = models.CharField(max_length = 64)
@@ -15,9 +15,7 @@ class Restaurant(models.Model):
     def save(self, *args, **kwargs):
         for field in self._meta.fields:
             if field.name == 'image_restaurant':
-                import re
-                term = re.sub(r'\s+', ' ', self.name.strip())
-                field.upload_to = 'restaurants/%s' % term
+                field.upload_to = 'restaurants/%s' % self.name.replace(' ','')
                 super(Restaurant,self).save(*args, **kwargs)
     
     def __unicode__(self):
@@ -36,45 +34,50 @@ class Text(models.Model):
     class Meta:
         abstract = True
 
-class Dish(Text):
-    restaurant = models.ManyToManyField(Restaurant, through = 'RestaurantDish', through_fields = ('dish','restaurant'))
-
 class RestaurantDish(models.Model):
     restaurant = models.ForeignKey(Restaurant)
-    dish = models.ForeignKey(Dish)
-    price = models.DecimalField(max_digits = 10, decimal_places = 3)
+    name = models.CharField(max_length = 128)
+    price = models.DecimalField(max_digits = 10, decimal_places = 2)
     image_dish = models.ImageField(upload_to='restaurants/',null = True)
 
     
     def save(self, *args, **kwargs):
         for field in self._meta.fields:
             if field.name == 'image_dish':
-                import re
-                term = re.sub(r'\s+', ' ', self.dish.name.strip())
-                field.upload_to = 'restaurantsdish/%s' % term
+                field.upload_to = 'restaurantsdish/%s' % self.name.replace(' ','')
                 super(RestaurantDish,self).save(*args, **kwargs)
     
     def votes(self):
-        votes = Evaluation.objects.filter(restaurantdish = self)
+        votes = EvaluationCriteria.objects.filter(restaurantdish = self)
         total = 0
         cont = 0
         for vote in votes:
             cont = cont + 1
-            total = total + vote.evaluation
+            total = total + vote.points
         return str(total)
 
     def nvotes(self):
-        return str(Evaluation.objects.filter(restaurantdish = self).count())
+        return str(EvaluationCriteria.objects.filter(restaurantdish = self).count())
 
     def __unicode__(self):
-        return self.dish.name
+        return self.name+'-'+self.restaurant.name
  
+
+
+class Evaluation(Text):
+    evaluations = models.ManyToManyField(RestaurantDish, through='EvaluationCriteria', through_fields=( 'evaluation', 'restaurantdish'))    
+
 class Category(Text):
-    pass
+    categorys = models.ManyToManyField(Evaluation, through='CategoryCriteria', through_fields=('category', 'evaluation'))    
 
-
-class Evaluation(models.Model):
-    user = models.ForeignKey(User, related_name = 'evaluations')
-    restaurantdish = models.ForeignKey(RestaurantDish, related_name = 'evaluations')
+class CategoryCriteria(models.Model):
     category = models.ForeignKey(Category, related_name = 'evaluations')
-    evaluation = models.PositiveSmallIntegerField()
+    evaluation = models.ForeignKey(Evaluation, related_name = 'categorys')
+
+class EvaluationCriteria(models.Model):
+    evaluation = models.ForeignKey(Evaluation, related_name = 'restaurantdishes')
+    restaurantdish = models.ForeignKey(RestaurantDish, related_name = 'evaluations')
+    user = models.ForeignKey(User, related_name = 'evaluations')
+    points = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(5)])
+
+

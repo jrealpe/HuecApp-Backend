@@ -13,27 +13,111 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadReque
 from web.models import *
 from push_notifications.models import GCMDevice,APNSDevice
 
-# Create your views here.
+def getDishesCategory(categorys):
+    result = []
+    name = ''
+    last = ''
+    for category in categorys:
+        name = name + last +str(category.evaluation.id)
+        last =' ,'
+    count = len(categorys)
+    sql =' SELECT * from web_restaurantdish WHERE id in (\
+            SELECT final.restaurantdish_id\
+             FROM (SELECT * FROM (web_evaluationcriteria)\
+             WHERE evaluation_id IN ('+name+') GROUP  BY restaurantdish_id\
+                 HAVING Count(DISTINCT id) = '+str(count)+') as final) '
+    dishes = RestaurantDish.objects.raw(sql)
+    result = []
+    for dish in dishes:
+        votes = 0
+        for category in categorys:
+            for evaluation in EvaluationCriteria.objects.filter(restaurantdish = dish, evaluation = category.evaluation):
+                votes = votes + evaluation.points
+        result.append((dish,votes))
+    return  result
 
-#@login_required
-def getTop(request):
+def getTopFull(request):
     if request.method == 'GET':
+        id_category = 0
+        id_category = request.GET.get('category', False)
         try:
-            category = request.GET['category']
+            id_category = int(id_category)
         except:
-            category = None
-        if category is None:
-            query = 'SELECT web_restaurantdish.* FROM\
-                    (SELECT DISTINCT restaurantdish_id, SUM(evaluation) as sum \
-                    FROM web_evaluation GROUP BY restaurantdish_id ORDER BY sum DESC LIMIT 5)\
-                    as tb_evaluations, web_restaurantdish WHERE web_restaurantdish.id =tb_evaluations.restaurantdish_id  '
+            return HttpResponseBadRequest(json.dumps({'error':'parametros errados'}))
+        if (id_category ==0):
+            categorys = Category.objects.all()
         else:
-            query = 'SELECT web_restaurantdish.* FROM\
-                    (SELECT DISTINCT restaurantdish_id, category_id, SUM(evaluation) as sum \
-                    FROM web_evaluation GROUP BY restaurantdish_id ORDER BY sum DESC LIMIT 5)\
-                    as tb_evaluations, web_restaurantdish WHERE web_restaurantdish.id =tb_evaluations.restaurantdish_id AND tb_evaluations.category_id ='+ category
+            categorys = Category.objects.filter(pk = id_category)
+        results = []
+        for category in categorys:
+            evaluations = CategoryCriteria.objects.filter(category = category)
+            from operator import itemgetter, attrgetter
+            result = getDishesCategory(evaluations)
+            results.append((category, sorted(result, key=itemgetter(1), reverse = True)))
+        dishes = results
+        response = render_to_response(
+            'json/category_dishes.json',
+            {'dishes': dishes},
+            context_instance=RequestContext(request)
+        )
+        template = 'web/list.html'
+        return render_to_response(template,{'dishes':dishes}, context_instance= RequestContext(request))
 
-        dishes = RestaurantDish.objects.raw(query)
+#        response['Content-Type'] = 'application/json; charset=utf-8'
+ #       response['Cache-Control'] = 'no-cache'
+  #      return response
+
+def getByFilter(request):
+    if request.method == 'GET':
+        name =  request.GET.get('name', False)
+        restaurant = request.GET.get('restaurant', False)
+        category = request.GET.get('category', False)
+        filters = []
+        results = []
+        for f in [('name',name), ('restaurant',restaurant), ('category',category)]:
+            if (f[1]):
+                    filters.append((f))
+        dishes = []
+        for f in filters:
+            if(f[0]=='name'):
+                dishes = RestaurantDish.objects.filter(name__contains =f[1])
+                results = dishes
+                if (len(results)==0):
+                    break
+            elif(f[0]=='restaurant'):
+                if(len(dishes)==0):
+                    dishes = RestaurantDish.objects.filter(restaurant = f[1])
+                    results = dishes
+                    if (len(results)==0):
+                        break
+                else:
+                    results = []
+                    for d in dishes:
+                        if (str(d.restaurant.id) == str(f[1])):
+                            results.append(d)
+                    if (len(results)==0):
+                        break
+                    dishes = results
+            elif(f[0]=='category'):
+                categorys = Category.objects.filter(pk = f[1])
+                if (len(categorys)>0):
+                    evaluations = CategoryCriteria.objects.filter(category = categorys)
+                    from operator import itemgetter, attrgetter
+                    result = getDishesCategory(evaluations)
+                    result = sorted(result, key=itemgetter(1), reverse = True)
+                    if(len(dishes)==0):
+                        for r in result:
+                            results.append(r[0])
+                    else:
+                        results=[]
+                        for d in dishes:
+                            for r in result:
+                                if(r[0].id == d.id):
+                                   results.append(d)
+                else:
+                    return HttpResponseBadRequest(json.dumps({'error':'parametros errados'}))
+
+        dishes = results
         response = render_to_response(
             'json/dishes.json',
             {'dishes': dishes},
@@ -43,6 +127,7 @@ def getTop(request):
         response['Cache-Control'] = 'no-cache'
         return response
 
+  
 def get_user(email, username):
     mail = User.objects.filter(email=email.lower())
     nick = User.objects.filter(username = username.lower())
@@ -94,10 +179,11 @@ def login(request):
         if user.is_active:
             login(request, user)
             response_content = {
+                'id':user.id,
                 'username': user.username,
-                'email': user.mail,
+                'email': user.email,
                 'firstname': user.first_name,
-                'lastname': user.lastname,
+                'lastname': user.last_name,
             }
             response =  HttpResponse(json.dumps(response_content))
             response['Content-Type'] = 'application/json; charset=utf-8'

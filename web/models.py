@@ -60,7 +60,7 @@ class RestaurantDish(models.Model):
         return str(EvaluationCriteria.objects.filter(restaurantdish = self).count())
 
     def __unicode__(self):
-        return self.name
+        return self.name+' '+self.restaurant.name
  
 
 

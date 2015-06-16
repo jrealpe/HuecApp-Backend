@@ -213,9 +213,9 @@
           <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>  {{d.0}}
         </button>
         <br/>
-        <ul class="event-list" data-dish="{{d.0}}">
+        <ul class="event-list" data-dish="{{d.0}}" >
             {% for p in d.1 %}
-					<li>
+					<li data-toggle="modal" data-target="#myModal"  data-id="{{p.0.id}}">
             <time datetime="{{ d.0 }}">
               <span class="day"> {{p.1}} </span>
               <span class="month">{{ p.0.name}} </span>
@@ -225,10 +225,7 @@
               <h2 class="title">{{p.0.name}}</h2>
               <p class="desc">{{p.0.restaurant.name}}</p>
 						</div>
-						<div class="social">
-							<ul>								
-              </ul>
-						</div>
+						<div class="social"></div>
 					 </li>
             {% endfor %}
           </ul>
@@ -236,7 +233,27 @@
 			</div>
 		</div>
 	</div>
-
+  <div class="modal fade " id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <p>
+          Recuerda que las votaciones solo son de 1 a 5. <br/>
+          No debes llenar todas las opciones, es opcional.
+          </p>
+          <br/>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <button type="button" id="save" class="btn btn-primary">¡Votar!</button>
+        </div>
+      </div>
+    </div>
+  </div>
 <script type="text/javascript">
   $(document).ready(function(){
     var chevronup = "glyphicon glyphicon-chevron-up";
@@ -254,6 +271,40 @@
         ul.css('display','none');
         span.addClass(chevronup);
       }
+    });
+    var modal = $('#myModal');
+    var title = $('#myModalLabel');
+    var body = $('#myModal .modal-body');
+
+    var getCategorys = function(){
+      $.get( "/Evaluacion/?format=json", function( data ) {
+        var results = data.results;
+        for ( r=0; r<results.length; r++){
+          var data_ = results[r];
+          $(body).append('<div><p>'+data_.name +'</p><input type="number" id="'+data_.id+'" value=""></div>');
+        }
+      });
+    };
+
+    getCategorys();
+    $('li').click(function(){
+      var data = $(this).data('id');
+      console.log(data);
+      title.empty();
+      $.get( "/RestaurantPlato/"+data+"?format=json", function( data ) {
+        title.append(data.name);
+        $('#save').data('id',data.id);
+      });
+    });
+
+
+    $('#save').click(function(){
+      var data = $(this).data('id');
+      var post_d = []
+      $('#myModal .modal-body div').each(function(){
+        var elemen = '#myModal .modal-body div p';
+        console.log($(elemen).html());
+      });
     });
   });
 </script>

@@ -27,6 +27,14 @@ class CategoryCriteriaViewSet(viewsets.ModelViewSet):
     serializer_class = CategoryCriteriaSerializer
     queryset = CategoryCriteria.objects.all()
 
+    def get_queryset(self):
+        queryset = CategoryCriteria.objects.all()
+        category = self.request.query_params.get('category', None)
+        if category is not None:
+            queryset = queryset.filter(category = category)
+        return queryset
+
+
 class EvaluationViewSet(viewsets.ModelViewSet):
     serializer_class = EvaluationSerializer
     queryset = Evaluation.objects.all()

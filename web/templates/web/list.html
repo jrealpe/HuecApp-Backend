@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet">
     <style type="text/css">
-            @import url("http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,400italic");
+    @import url("http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,400italic");
     @import url("//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css");
     body {
 		padding: 60px 0px;
@@ -51,7 +51,8 @@
 	}
 	.event-list > li time > .month {
 		display: block;
-		font-size: 24pt;
+		font-size: 12pt;
+    word-wrap: break-word;
 		font-weight: 900;
 		line-height: 1;
 	}
@@ -207,111 +208,105 @@
     <div class="container">
 		<div class="row">
 			<div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
-				<ul class="event-list">
-          {% for d in dishes %}
+			  {% for d in dishes %}          
+        <button type="button" class="btn btn-lg btn-block btn-info" data-dish="{{d.0}}">
+          <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>  {{d.0}}
+        </button>
+        <br/>
+        <ul class="event-list" data-dish="{{d.0}}" >
             {% for p in d.1 %}
-					<li>
+					<li data-toggle="modal" data-target="#myModal"  data-id="{{p.0.id}}">
             <time datetime="{{ d.0 }}">
               <span class="day"> {{p.1}} </span>
-              <span class="month">{{ d.0}} </span>
+              <span class="month">{{ p.0.name}} </span>
 						</time>
             <img alt="Independence Day" src="/media/{{ p.0.image_dish}}" />
 						<div class="info">
               <h2 class="title">{{p.0.name}}</h2>
               <p class="desc">{{p.0.restaurant.name}}</p>
 						</div>
-						<div class="social">
-							<ul>
-								<li class="facebook" style="width:33%;"><a href="#facebook"><span class="fa fa-facebook"></span></a></li>
-								<li class="twitter" style="width:34%;"><a href="#twitter"><span class="fa fa-twitter"></span></a></li>
-								<li class="google-plus" style="width:33%;"><a href="#google-plus"><span class="fa fa-google-plus"></span></a></li>
-							</ul>
-						</div>
+						<div class="social"></div>
 					 </li>
             {% endfor %}
+          </ul>
           {% endfor %}
-          <!--
-					<li>
-						<time datetime="2014-07-20 0000">
-							<span class="day">8</span>
-							<span class="month">Jul</span>
-							<span class="year">2014</span>
-							<span class="time">12:00 AM</span>
-						</time>
-						<div class="info">
-							<h2 class="title">One Piece Unlimited World Red</h2>
-							<p class="desc">PS Vita</p>
-							<ul>
-								<li style="width:50%;"><a href="#website"><span class="fa fa-globe"></span> Website</a></li>
-								<li style="width:50%;"><span class="fa fa-money"></span> $39.99</li>
-							</ul>
-						</div>
-						<div class="social">
-							<ul>
-								<li class="facebook" style="width:33%;"><a href="#facebook"><span class="fa fa-facebook"></span></a></li>
-								<li class="twitter" style="width:34%;"><a href="#twitter"><span class="fa fa-twitter"></span></a></li>
-								<li class="google-plus" style="width:33%;"><a href="#google-plus"><span class="fa fa-google-plus"></span></a></li>
-							</ul>
-						</div>
-					</li>
-
-					<li>
-						<time datetime="2014-07-20 2000">
-							<span class="day">20</span>
-							<span class="month">Jan</span>
-							<span class="year">2014</span>
-							<span class="time">8:00 PM</span>
-						</time>
-						<img alt="My 24th Birthday!" src="https://farm5.staticflickr.com/4150/5045502202_1d867c8a41_q.jpg" />
-						<div class="info">
-							<h2 class="title">Mouse0270's 24th Birthday!</h2>
-							<p class="desc">Bar Hopping in Erie, Pa.</p>
-							<ul>
-								<li style="width:33%;">1 <span class="glyphicon glyphicon-ok"></span></li>
-								<li style="width:34%;">3 <span class="fa fa-question"></span></li>
-								<li style="width:33%;">103 <span class="fa fa-envelope"></span></li>
-							</ul>
-						</div>
-						<div class="social">
-							<ul>
-								<li class="facebook" style="width:33%;"><a href="#facebook"><span class="fa fa-facebook"></span></a></li>
-								<li class="twitter" style="width:34%;"><a href="#twitter"><span class="fa fa-twitter"></span></a></li>
-								<li class="google-plus" style="width:33%;"><a href="#google-plus"><span class="fa fa-google-plus"></span></a></li>
-							</ul>
-						</div>
-					</li>
-
-					<li>
-						<time datetime="2014-07-31 1600">
-							<span class="day">31</span>
-							<span class="month">Jan</span>
-							<span class="year">2014</span>
-							<span class="time">4:00 PM</span>
-						</time>
-						<img alt="Disney Junior Live On Tour!" src="http://www.thechaifetzarena.com/images/main/DL13_PiratePrincess_thumb.jpg" />
-						<div class="info">
-							<h2 class="title">Disney Junior Live On Tour!</h2>
-							<p class="desc"> Pirate and Princess Adventure</p>
-							<ul>
-								<li style="width:33%;">$49.99 <span class="fa fa-male"></span></li>
-								<li style="width:34%;">$29.99 <span class="fa fa-child"></span></li>
-							</ul>
-						</div>
-						<div class="social">
-							<ul>
-								<li class="facebook" style="width:33%;"><a href="#facebook"><span class="fa fa-facebook"></span></a></li>
-								<li class="twitter" style="width:34%;"><a href="#twitter"><span class="fa fa-twitter"></span></a></li>
-								<li class="google-plus" style="width:33%;"><a href="#google-plus"><span class="fa fa-google-plus"></span></a></li>
-							</ul>
-						</div>
-          </li>-->
-				</ul>
 			</div>
 		</div>
 	</div>
-
+  <div class="modal fade " id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+        </div>
+        <div class="modal-body">
+        </div>
+        <div class="modal-footer">
+          <p>
+          Recuerda que las votaciones solo son de 1 a 5. <br/>
+          No debes llenar todas las opciones, es opcional.
+          </p>
+          <br/>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+          <button type="button" id="save" class="btn btn-primary">¡Votar!</button>
+        </div>
+      </div>
+    </div>
+  </div>
 <script type="text/javascript">
+  $(document).ready(function(){
+    var chevronup = "glyphicon glyphicon-chevron-up";
+    var chevrondown = "glyphicon glyphicon-chevron-down"
+    $('button').click(function(){
+      var data = $(this).data('dish');
+      var ul = $('ul[data-dish="'+data+'"]');
+      var visible = ul.css('display');
+      var span = $('button[data-dish="'+data+'"] span');
+      span.removeClass();
+      if(visible == 'none'){
+        ul.css('display','block');
+        span.addClass(chevrondown);
+      }else{
+        ul.css('display','none');
+        span.addClass(chevronup);
+      }
+    });
+    var modal = $('#myModal');
+    var title = $('#myModalLabel');
+    var body = $('#myModal .modal-body');
 
+    var getCategorys = function(){
+      $.get( "/Evaluacion/?format=json", function( data ) {
+        var results = data.results;
+        for ( r=0; r<results.length; r++){
+          var data_ = results[r];
+          $(body).append('<div><p>'+data_.name +'</p><input type="number" id="'+data_.id+'" value=""></div>');
+        }
+      });
+    };
+
+    getCategorys();
+    $('li').click(function(){
+      var data = $(this).data('id');
+      console.log(data);
+      title.empty();
+      $.get( "/RestaurantPlato/"+data+"?format=json", function( data ) {
+        title.append(data.name);
+        $('#save').data('id',data.id);
+      });
+    });
+
+
+    $('#save').click(function(){
+      var data = $(this).data('id');
+      var post_d = []
+      $('#myModal .modal-body div').each(function(){
+        var elemen = '#myModal .modal-body div p';
+        console.log($(elemen).html());
+      });
+    });
+  });
 </script>
 </body>
 </html>

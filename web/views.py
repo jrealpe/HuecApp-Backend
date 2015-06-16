@@ -42,20 +42,29 @@ def getDishes(request):
     
 
 
+def isinlist( dishes, dish):
+    for d in dishes:
+        if (d.id ==  dish.id):
+            return True
+    return False
+
 def getDishesCategory(categorys):
-    result = []
-    name = ''
-    last = ''
+    categories = []
+    dishes = []
     for category in categorys:
-        name = name + last +str(category.evaluation.id)
-        last =' ,'
-    count = len(categorys)
-    sql =' SELECT * from web_restaurantdish WHERE id in (\
-            SELECT final.restaurantdish_id\
-             FROM (SELECT * FROM (web_evaluationcriteria)\
-             WHERE evaluation_id IN ('+name+') GROUP  BY restaurantdish_id\
-                 HAVING Count(DISTINCT id) = '+str(count)+') as final) '
-    dishes = RestaurantDish.objects.raw(sql)
+        categories.append(category.evaluation)
+    restaurantdishes = RestaurantDish.objects.all()
+
+    cont = 0
+    for dish in  restaurantdishes:
+        for evaluation in categories:
+            evaluations = EvaluationCriteria.objects.filter(restaurantdish = dish, evaluation = evaluation)
+            if (len(evaluations)>0):
+                cont = cont +1
+        if (cont == len(categories)):
+            dishes.append(dish)
+        cont = 0
+
     result = []
     for dish in dishes:
         votes = 0

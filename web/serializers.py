@@ -29,9 +29,13 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('id', 'name')
 
 class CategoryCriteriaSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
     class Meta:
         model = CategoryCriteria
-        fields = ('id', 'evaluation', 'category')
+        fields = ('id', 'evaluation', 'category', 'name')
+
+    def get_name(self, obj):
+        return str(obj.evaluation.name)
 
 class EvaluationSerializer(serializers.ModelSerializer):
     class Meta:

@@ -29,7 +29,7 @@ def getCategories(request):
 
 def getDishes(request):
     if request.method == "GET":
-           dishes = RestaurantDish.objects.raw('select distinct name from web_restaurantdish')
+           dishes = RestaurantDish.objects.raw('select * from web_restaurantdish')
     
            response = render_to_response(
                'json/restaurant_dish.json',

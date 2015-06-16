@@ -11,7 +11,36 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadRequest, HttpResponseForbidden
 from web.models import *
-from push_notifications.models import GCMDevice,APNSDevice
+from push_notifications.models import GCMDevice
+
+def getCategories(request):
+    if request.method == "GET":
+           categories = Category.objects.all()
+    
+           response = render_to_response(
+               'json/category.json',
+               {'categories': categories},
+               context_instance=RequestContext(request)
+           )
+           response['Content-Type'] = 'application/json; charset=utf-8'
+           response['Cache-Control'] = 'no-cache'
+           return response
+
+
+def getDishes(request):
+    if request.method == "GET":
+           dishes = RestaurantDish.objects.raw('select distinct name from web_restaurantdish')
+    
+           response = render_to_response(
+               'json/restaurant_dish.json',
+               {'dishes': dishes},
+               context_instance=RequestContext(request)
+           )
+           response['Content-Type'] = 'application/json; charset=utf-8'
+           response['Cache-Control'] = 'no-cache'
+           return response   
+    
+
 
 def isinlist( dishes, dish):
     for d in dishes:
@@ -211,21 +240,6 @@ from django.contrib.auth import logout
 def logout(request):
     logout(request)
     return redirect('/')
-
-@never_cache
-def getRestaurants(request):
-
-    if request.method == "GET":
-        restaurants = Restaurant.objects.all()
- 
-        response = render_to_response(
-            'json/restaurants.json',
-            {'restaurants': restaurants},
-            context_instance=RequestContext(request)
-        )
-        response['Content-Type'] = 'application/json; charset=utf-8'
-        response['Cache-Control'] = 'no-cache'
-        return response
 
 @never_cache
 def getRestaurants(request):

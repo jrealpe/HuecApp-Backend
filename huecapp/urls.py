@@ -39,6 +39,8 @@ urlpatterns = [
     url(r'^signup/', 'web.views.signup'),
     url(r'^top/', 'web.views.getTopFull'),
     url(r'^filter/', 'web.views.getByFilter'),
+    url(r'^categories/', 'web.views.getCategories'),
+    url(r'^dishes/', 'web.views.getDishes'),
     url(r'^restaurants/', 'web.views.getRestaurants'),
     url(r'^login/', 'web.views.login'),
     url(r'^logout/', 'web.views.logout'),

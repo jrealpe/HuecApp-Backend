@@ -21,21 +21,20 @@ def isinlist( dishes, dish):
 
 def getDishesCategory(categorys):
     categories = []
-    for category in categorys:
-        categories.append(category.evaluation.id)
-    evaluations = EvaluationCriteria.objects.filter(evaluation__in = categories)
-    #.values_list('restaurantdish_id', flat=True).distinct()
-    cont = 0
     dishes = []
-    for evaluation in evaluations:
-        dish = evaluation.restaurantdish
-        for evaluation_ in evaluations:
-            if (evaluation_.restaurantdish.id == dish.id):
-                cont = cont + 1
+    for category in categorys:
+        categories.append(category.evaluation)
+    restaurantdishes = RestaurantDish.objects.all()
+
+    cont = 0
+    for dish in  restaurantdishes:
+        for evaluation in categories:
+            evaluations = EvaluationCriteria.objects.filter(restaurantdish = dish, evaluation = evaluation)
+            if (len(evaluations)>0):
+                cont = cont +1
         if (cont == len(categories)):
-            if not isinlist(dishes, dish):
-                dishes.append(dish)
-        cont =0
+            dishes.append(dish)
+        cont = 0
 
     result = []
     for dish in dishes:

@@ -13,15 +13,30 @@ from django.http import HttpResponse, HttpResponseNotFound, HttpResponseBadReque
 from web.models import *
 from push_notifications.models import GCMDevice,APNSDevice
 
+def isinlist( dishes, dish):
+    for d in dishes:
+        if (d.id ==  dish.id):
+            return True
+    return False
+
 def getDishesCategory(categorys):
-    result = []
     categories = []
     for category in categorys:
         categories.append(category.evaluation.id)
-    print categories
-    evaluations = EvaluationCriteria.objects.filter(evaluation__in = categories).values_list('restaurantdish_id', flat=True).distinct()
-    print evaluations
-    dishes = RestaurantDish.objects.filter(id__in =evaluations)
+    evaluations = EvaluationCriteria.objects.filter(evaluation__in = categories)
+    #.values_list('restaurantdish_id', flat=True).distinct()
+    cont = 0
+    dishes = []
+    for evaluation in evaluations:
+        dish = evaluation.restaurantdish
+        for evaluation_ in evaluations:
+            if (evaluation_.restaurantdish.id == dish.id):
+                cont = cont + 1
+        if (cont == len(categories)):
+            if not isinlist(dishes, dish):
+                dishes.append(dish)
+        cont =0
+
     result = []
     for dish in dishes:
         votes = 0

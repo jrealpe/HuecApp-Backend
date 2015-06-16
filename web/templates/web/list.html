@@ -283,7 +283,7 @@
       url: "/Evaluacion/?format=json",
       data: {},
       success:  function( data ) {
-        var results = data.results;
+        var results = data;
         for ( r=0; r<results.length; r++){
           var data_ = results[r];
           $(body).append('<div><p>'+data_.name +'</p><input type="number" id="'+data_.id+'" value=""></div>');

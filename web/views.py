@@ -134,8 +134,8 @@ def getByFilter(request):
         )
         response['Content-Type'] = 'application/json; charset=utf-8'
         response['Cache-Control'] = 'no-cache'
-        return response
-
+        template = 'web/list2.html'
+        return render_to_response(template,{'dishes':dishes}, context_instance= RequestContext(request))
   
 def get_user(email, username):
     mail = User.objects.filter(email=email.lower())

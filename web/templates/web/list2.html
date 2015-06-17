@@ -8,7 +8,7 @@
     <title>Event List - Bootsnipp.com</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet">
-    <style type="text/css">
+        <style type="text/css">
     @import url("http://fonts.googleapis.com/css?family=Lato:100,300,400,700,900,400italic");
     @import url("//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css");
     body {
@@ -204,6 +204,10 @@
     </style>
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<script src="http://t4t5.github.io/sweetalert/dist/sweetalert-dev.js">
+ <link href="http://t4t5.github.io/sweetalert/dist/sweetalert.css" rel="stylesheet">
+
+
 </head>
 <body>
     <div class="container-fluid">
@@ -223,7 +227,13 @@
               <p class="desc">{{d.restaurant.name}}</p>
               <p class="desc">${{d.price}}</p>
             </div>
-						<div class="social"></div>
+						<div class="social">
+							<ul>
+								<li id="social" class="facebook" style="width:33%;"><a href="#facebook"><span class="fa fa-facebook"></span></a></li>
+								<li id="social" class="twitter" style="width:34%;"><a href="#twitter"><span class="fa fa-twitter"></span></a></li>
+								<li id="social" class="google-plus" style="width:33%;"><a href="#google-plus"><span class="fa fa-google-plus"></span></a></li>
+							</ul>
+						</div>
 					 </li>
           </ul>
           {% endfor %}
@@ -306,7 +316,7 @@
     };
 
     getCategorys();
-    $('li').click(function(){
+    $('li').not('#social').click(function(){
       var data = $(this).data('id');
       console.log(data);
       title.empty();
@@ -336,12 +346,20 @@
           url:  "/CriterioEvaluacion/",
           data: {'user':user,'points':value,'restaurantdish':data,'evaluation':id},
           success: function( data ) {
+            swal({
+              type:"success",
+              title: "Bien hecho",
+              text: "Has calificado al plato",
+              timer: 2000,
+              showConfirmButton: false
+            });
+
           },
           error: function(data){
           }
       });
     });
-    $('#myModal').hide();
+    $('#myModal').modal('hide');
     });
   });
 </script>

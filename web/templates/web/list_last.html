@@ -203,6 +203,11 @@
     </style>
     <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <script src="http://t4t5.github.io/sweetalert/dist/sweetalert-dev.js"></script>
+
+   <link href="http://t4t5.github.io/sweetalert/dist/sweetalert.css" rel="stylesheet">
+
+
 </head>
 <body>
     <div class="container-fluid">
@@ -333,27 +338,20 @@
     });
 */
 
-    $('#save').click(function(){
+    $('.btn').click(function(){
       var data = $(this).data('id');
       var post_d = [];
       var user =$('#user').text();
-      $('#myModal .modal-body div').each(function(){
-        var elemen = '#myModal .modal-body div';
-        console.log($(elemen).html());
-        id = $(this).data('post');
-        value=$('input[name=point'+id+']:checked').val();
-        user = 1;
-        $.ajax({
-          type: "POST",
-          url:  "/CriterioEvaluacion/",
-          data: {'user':user,'points':value,'restaurantdish':data,'evaluation':id},
-          success: function( data ) {
-          },
-          error: function(data){
-          }
+      swal({
+        type:"success",
+        title: "",
+        text: "Gracias por tu colaboracion",
+        timer: 2000,
+        showConfirmButton: false
       });
-    });
-    $('#myModal').hide();
+
+
+    $('#myModal').modal('hide');
     });
   });
 </script>

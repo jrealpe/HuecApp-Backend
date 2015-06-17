@@ -320,14 +320,27 @@
       });
     });
 
-
     $('#save').click(function(){
       var data = $(this).data('id');
-      var post_d = []
+      var post_d = [];
+      var user =$('#user').text();
       $('#myModal .modal-body div').each(function(){
-        var elemen = '#myModal .modal-body div p';
+        var elemen = '#myModal .modal-body div';
         console.log($(elemen).html());
+        id = $(this).data('post');
+        value=$('input[name=point'+id+']:checked').val();
+        user = 1;
+        $.ajax({
+          type: "POST",
+          url:  "/CriterioEvaluacion/",
+          data: {'user':user,'points':value,'restaurantdish':data,'evaluation':id},
+          success: function( data ) {
+          },
+          error: function(data){
+          }
       });
+    });
+    $('#myModal').hide();
     });
   });
 </script>

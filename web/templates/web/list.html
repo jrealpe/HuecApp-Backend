@@ -256,6 +256,9 @@
       </div>
     </div>
   </div>
+  <div id="user" style="display:none;">
+    {{request.user.pk}}
+  </div>
 <script type="text/javascript">
   $(document).ready(function(){
     var chevronup = "glyphicon glyphicon-chevron-up";
@@ -280,7 +283,7 @@
     var getCircles = function(data){
       var circles = [];
       for ( i = 1; i<6; i++){
-        var op = '<input type="radio" id="'+i+'" name="point" value="'+i+'">'+i+'' ;
+        var op = '<input type="radio" id="'+data+'" name="point'+data+'" value="'+i+'">'+i+'' ;
         console.log(op);
         circles.push(op);
       } 
@@ -297,14 +300,14 @@
         var results = data;
         for ( r=0; r<results.length; r++){
           var data_ = results[r];
-          var circles = getCircles(data_);                                               
+          var circles = getCircles(data_.id);                                               
           var options = '';
           console.log(circles);
           for (c=0;c< circles.length;c++){
             options = options + circles[c];
           }
           console.log(options);
-          $(body).append('<div ><p>'+data_.name +'</p>'+options);
+          $(body).append('<div data-post="'+data_.id+'" ><p>'+data_.name +'</p>'+options);
         }
       }
       });
@@ -326,7 +329,7 @@
       });
     });
 
-
+/*
     $('#save').click(function(){
       var data = $(this).data('id');
       var post_d = []
@@ -334,6 +337,30 @@
         var elemen = '#myModal .modal-body div p';
         console.log($(elemen).html());
       });
+    });
+*/
+
+    $('#save').click(function(){
+      var data = $(this).data('id');
+      var post_d = [];
+      var user =$('#user').text();
+      $('#myModal .modal-body div').each(function(){
+        var elemen = '#myModal .modal-body div';
+        console.log($(elemen).html());
+        id = $(this).data('post');
+        value=$('input[name=point'+id+']:checked').val();
+        user = 1;
+        $.ajax({
+          type: "POST",
+          url:  "/CriterioEvaluacion/",
+          data: {'user':user,'points':value,'restaurantdish':data,'evaluation':id},
+          success: function( data ) {
+          },
+          error: function(data){
+          }
+      });
+    });
+    $('#myModal').hide();
     });
   });
 </script>

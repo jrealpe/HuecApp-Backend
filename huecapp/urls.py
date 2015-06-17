@@ -42,6 +42,8 @@ urlpatterns = [
     url(r'^categories/', 'web.views.getCategories'),
     url(r'^dishes/', 'web.views.getDishes'),
     url(r'^restaurants/', 'web.views.getRestaurants'),
+    url(r'^rank/', 'web.views.rank'),
+    url(r'^lasthuecas/', 'web.views.lasthuecas'),
     url(r'^login/', 'web.views.login'),
     url(r'^logout/', 'web.views.logout'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),

@@ -295,3 +295,26 @@ class GCMDeviceViewSet(viewsets.ModelViewSet):
     queryset = GCMDevice.objects.all()
     serializer_class = GCMDeviceSerializer
 
+def rank(request):
+    #get top [:1]
+    if request.method == 'GET':
+        categorys = Category.objects.all()
+        results = []
+        for category in categorys:
+            evaluations = CategoryCriteria.objects.filter(category = category)
+            from operator import itemgetter, attrgetter
+            result = getDishesCategory(evaluations)
+            result = result[:1]
+            results.append((category, sorted(result, key=itemgetter(1), reverse = True)))
+        dishes = results
+        print dishes
+        template = 'web/list.html'
+        return render_to_response(template,{'dishes':dishes}, context_instance= RequestContext(request))
+
+def lasthuecas(request):
+    if request.method == 'GET':
+        lasthuecas = list(RestaurantDish.objects.all())[-5:]
+        template = 'web/list2.html'
+        return render_to_response(template,{'dishes':lasthuecas}, context_instance= RequestContext(request))
+ 
+

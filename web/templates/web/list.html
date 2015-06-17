@@ -20,6 +20,15 @@
     background-size: cover;
 	}
   
+    .carousel-inner > .item > img {
+      height: 200px;
+      width: 200px;
+    }
+ 
+    .carousel-caption{
+      margin-right: 10%;
+    }
+
     .container-fluid{
      background: url('{% static "1.jpg" %}') no-repeat center center fixed; 
       -webkit-background-size: cover;
@@ -263,6 +272,7 @@
       </div>
     </div>
     {% endif %}
+    <br/>
 		<div class="row-fluid">
 			<div class="[ col-xs-12-fluid col-sm-offset-2-fluid col-sm-8-fluid ]">
 			  {% for d in dishes %}          

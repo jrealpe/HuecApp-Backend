@@ -314,7 +314,7 @@ def rank(request):
 def lasthuecas(request):
     if request.method == 'GET':
         lasthuecas = list(RestaurantDish.objects.all())[-5:]
-        template = 'web/list2.html'
+        template = 'web/list_last.html'
         return render_to_response(template,{'dishes':lasthuecas}, context_instance= RequestContext(request))
  
 

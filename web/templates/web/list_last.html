@@ -238,18 +238,20 @@
           <h4 class="modal-title" id="myModalLabel">Ultimas Huecas</h4>
         </div>
         <div class="modal-body">
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Si he ido</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">No he ido</button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Lo desconozco</button>
+          <button type="button" class="btn btn-success" style="margin-left:30%;" data-dismiss="modal">Si he ido</button>
+          <br/> <br/>
+          <button type="button" class="btn btn-warning"  style="margin-left:30%;" data-dismiss="modal">No he ido</button>
+          <br/> <br/>
+          <button type="button" class="btn btn-danger"  style="margin-left:22%;"  data-dismiss="modal">Lo desconozco</button>
 
+        </div>
+        <div class="modal-footer">       
         </div>
       </div>
     </div>
   </div>
   <div id="user" style="display:none;">
-    {{request.user.pk}}
+    {{request.user}}
   </div>
 <script type="text/javascript">
   $(document).ready(function(){
@@ -276,7 +278,6 @@
       var circles = [];
       for ( i = 1; i<6; i++){
         var op = '<input type="radio" id="'+data+'" name="point'+data+'" value="'+i+'">'+i+'' ;
-        console.log(op);
         circles.push(op);
       } 
       return circles;

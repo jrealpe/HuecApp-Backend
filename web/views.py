@@ -98,8 +98,14 @@ def getTopFull(request):
             {'dishes': dishes},
             context_instance=RequestContext(request)
         )
+        restaurants_ = RestaurantDish.objects.filter(restaurant = 1)
+        i = 0
+        restaurants = []
+        for restaurant in restaurants_: 
+           restaurants.append((i,restaurant))
+           i = i +1            
         template = 'web/list.html'
-        return render_to_response(template,{'dishes':dishes}, context_instance= RequestContext(request))
+        return render_to_response(template,{'dishes':dishes, 'restaurants':restaurants}, context_instance= RequestContext(request))
 
 #        response['Content-Type'] = 'application/json; charset=utf-8'
  #       response['Cache-Control'] = 'no-cache'

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <!-- This file has been downloaded from Bootsnipp.com. Enjoy! -->
-    <title>Event List - Bootsnipp.com</title>
+    <title></title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="http://netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet">
         <style type="text/css">
@@ -19,7 +19,16 @@
     -o-background-size: cover;
     background-size: cover;
 	}
-    
+  
+    .container-fluid{
+     background: url('{% static "1.jpg" %}') no-repeat center center fixed; 
+      -webkit-background-size: cover;
+      -moz-background-size: cover;
+      -o-background-size: cover;
+      background-size: cover;
+
+    }
+
     .event-list {
 		list-style: none;
 		font-family: 'Lato', sans-serif;
@@ -214,7 +223,46 @@
 
  </head>
 <body>
-    <div class="container-fluid">
+  <div class="container-fluid">
+    {% if restaurants %}
+    <div class="row clearfix">
+      <div class="col-md-12 column">
+        <div class="carousel slide" id="carousel-325730">
+          <ol class="carousel-indicators">
+            {% for d in restaurants %}          
+              {% if d.0 == 0 %}
+            <li class="active" data-slide-to="{{d.0}}" data-target="#carousel-325730">
+              {% else %}
+            <li class="" data-slide-to="{{d.0}}" data-target="#carousel-325730">
+
+              {% endif %}
+            </li>
+            {% endfor %}
+          </ol>
+          <div class="carousel-inner">
+            {% for d in restaurants %}          
+              {% if d.0 == 0 %}
+             <div class="item active">
+               {% else %}
+             <div class="item">
+              {% endif %}
+              <img alt="" src="/media/{{ d.1.image_dish}}" />
+              <div class="carousel-caption">
+                <h4>
+                 {{d.1.name }}
+                </h4>
+                <p>
+                  {{ d.1.restaurant  }}
+                </p>
+              </div>
+            </div>
+            {% endfor %}
+          </div> <a class="left carousel-control" href="#carousel-325730" data-slide="prev"><span class="glyphicon glyphicon-chevron-left"></span></a> <a class="right carousel-control" href="#carousel-325730" data-slide="next"><span class="glyphicon glyphicon-chevron-right"></span></a>
+          
+        </div>
+      </div>
+    </div>
+    {% endif %}
 		<div class="row-fluid">
 			<div class="[ col-xs-12-fluid col-sm-offset-2-fluid col-sm-8-fluid ]">
 			  {% for d in dishes %}          
